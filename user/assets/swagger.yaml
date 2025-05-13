@@ -1,0 +1,198 @@
+basePath: /dev/v1
+definitions:
+  apigateway.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      datetime:
+        type: string
+      errors:
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  apigateway.UserAddRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  apigateway.UserAdded:
+    properties:
+      code:
+        type: integer
+      datetime:
+        type: string
+      status:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
+  apigateway.UserAuthorized:
+    properties:
+      code:
+        type: integer
+      datetime:
+        type: string
+      status:
+        type: string
+      token:
+        type: string
+    type: object
+  apigateway.UserDeleted:
+    properties:
+      code:
+        type: integer
+      datetime:
+        type: string
+      status:
+        type: string
+      user:
+        type: string
+    type: object
+  models.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      updated_at:
+        type: string
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: 127.0.0.1:3000
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: Testing Swagger APIs.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: User Lambda Function
+  version: "1.0"
+paths:
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Login with user credentials.
+      parameters:
+      - description: Credentials
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/apigateway.UserAddRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/apigateway.UserAuthorized'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+        "500":
+          description: Error Internal Server
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+      security:
+      - JWT: []
+      summary: Login user.
+      tags:
+      - Users
+    put:
+      consumes:
+      - application/json
+      description: Add new user.
+      parameters:
+      - description: User
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/apigateway.UserAddRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Success
+          schema:
+            $ref: '#/definitions/apigateway.UserAdded'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+        "500":
+          description: Error Internal Server
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+      security:
+      - JWT: []
+      summary: Add user.
+      tags:
+      - Users
+  /users/{email}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user profile.
+      parameters:
+      - description: Email
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/apigateway.UserDeleted'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+        "500":
+          description: Error Internal Server
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+      security:
+      - JWT: []
+      summary: Delete user.
+      tags:
+      - Users
+schemes:
+- http
+- https
+securityDefinitions:
+  JWT:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

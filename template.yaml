@@ -1,0 +1,1251 @@
+Resources:
+  ShopyBucketD52CA9C2:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: BucketOwnerFullControl
+      BucketName: shopy-images
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      Tags:
+        - Key: aws-cdk:auto-delete-objects
+          Value: "true"
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyBucket/Resource
+  ShopyBucketPolicyBB3E4399:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: ShopyBucketD52CA9C2
+      PolicyDocument:
+        Statement:
+          - Action:
+              - s3:DeleteObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:PutBucketPolicy
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::GetAtt:
+                  - CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092
+                  - Arn
+            Resource:
+              - Fn::GetAtt:
+                  - ShopyBucketD52CA9C2
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ShopyBucketD52CA9C2
+                        - Arn
+                    - /*
+          - Action: s3:GetObject
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Resource:
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ShopyBucketD52CA9C2
+                      - Arn
+                  - /*
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyBucket/Policy/Resource
+  ShopyBucketAutoDeleteObjectsCustomResourceEE7DD9F7:
+    Type: Custom::S3AutoDeleteObjects
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F
+          - Arn
+      BucketName:
+        Ref: ShopyBucketD52CA9C2
+    DependsOn:
+      - ShopyBucketPolicyBB3E4399
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyBucket/AutoDeleteObjectsCustomResource/Default
+  CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+      ManagedPolicyArns:
+        - Fn::Sub: arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: ShopyStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role
+  CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: cdk-hnb659fds-assets-533267321074-us-east-1
+        S3Key: faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip
+      Timeout: 900
+      MemorySize: 128
+      Handler: index.handler
+      Role:
+        Fn::GetAtt:
+          - CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092
+          - Arn
+      Runtime: nodejs20.x
+      Description:
+        Fn::Join:
+          - ""
+          - - "Lambda function for auto-deleting objects in "
+            - Ref: ShopyBucketD52CA9C2
+            - " S3 bucket."
+    DependsOn:
+      - CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092
+    Metadata:
+      aws:cdk:path: ShopyStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler
+      aws:asset:path: asset.faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6
+      aws:asset:property: Code
+  ShopyApigateway4D92DCDB:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: shopy-restapi
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Resource
+  ShopyApigatewayDeployment1A72006768ed2ceef19f93c9b20ba4c423f2c796:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      Description: Automatically created by the RestApi construct
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    DependsOn:
+      - ShopyApigatewayOPTIONSA0E102E1
+      - ShopyApigatewayv1categoriesuuidDELETED5F5645E
+      - ShopyApigatewayv1categoriesuuidOPTIONS5906A9E2
+      - ShopyApigatewayv1categoriesuuidB5D5252D
+      - ShopyApigatewayv1categoriesGET455E0277
+      - ShopyApigatewayv1categoriesOPTIONS5A7AE44E
+      - ShopyApigatewayv1categoriesPOSTC8B7C30A
+      - ShopyApigatewayv1categories128552B2
+      - ShopyApigatewayv1OPTIONS81736E1D
+      - ShopyApigatewayv1productsuuidDELETE40962E74
+      - ShopyApigatewayv1productsuuidOPTIONSD9865C7C
+      - ShopyApigatewayv1productsuuidPUT603FFF69
+      - ShopyApigatewayv1productsuuid1D339BA5
+      - ShopyApigatewayv1productsGET9C633455
+      - ShopyApigatewayv1productsOPTIONSAB9C90A4
+      - ShopyApigatewayv1productsPOST857BDC03
+      - ShopyApigatewayv1products3B5C66F7
+      - ShopyApigatewayv1D6446B65
+      - ShopyApigatewayv1usersemailDELETEF330C5FE
+      - ShopyApigatewayv1usersemailOPTIONSA854005C
+      - ShopyApigatewayv1usersemailE464452D
+      - ShopyApigatewayv1usersOPTIONS9C90D5C0
+      - ShopyApigatewayv1usersPOST723282A3
+      - ShopyApigatewayv1usersPUT86369EFF
+      - ShopyApigatewayv1users8C61DECB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Deployment/Resource
+  ShopyApigatewayDeploymentStagedev5B0ED329:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId:
+        Ref: ShopyApigatewayDeployment1A72006768ed2ceef19f93c9b20ba4c423f2c796
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+      StageName: dev
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/DeploymentStage.dev/Resource
+  ShopyApigatewayOPTIONSA0E102E1:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      Integration:
+        IntegrationResponses:
+          - ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+            StatusCode: "204"
+        RequestTemplates:
+          application/json: "{ statusCode: 200 }"
+        Type: MOCK
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Methods: true
+          StatusCode: "204"
+      ResourceId:
+        Fn::GetAtt:
+          - ShopyApigateway4D92DCDB
+          - RootResourceId
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/OPTIONS/Resource
+  ShopyApigatewayv1D6446B65:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Fn::GetAtt:
+          - ShopyApigateway4D92DCDB
+          - RootResourceId
+      PathPart: v1
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/Resource
+  ShopyApigatewayv1OPTIONS81736E1D:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      Integration:
+        IntegrationResponses:
+          - ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+            StatusCode: "204"
+        RequestTemplates:
+          application/json: "{ statusCode: 200 }"
+        Type: MOCK
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Methods: true
+          StatusCode: "204"
+      ResourceId:
+        Ref: ShopyApigatewayv1D6446B65
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/OPTIONS/Resource
+  ShopyApigatewayv1categories128552B2:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Ref: ShopyApigatewayv1D6446B65
+      PathPart: categories
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/categories/Resource
+  ShopyApigatewayv1categoriesOPTIONS5A7AE44E:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      Integration:
+        IntegrationResponses:
+          - ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+            StatusCode: "204"
+        RequestTemplates:
+          application/json: "{ statusCode: 200 }"
+        Type: MOCK
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Methods: true
+          StatusCode: "204"
+      ResourceId:
+        Ref: ShopyApigatewayv1categories128552B2
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/categories/OPTIONS/Resource
+  ShopyApigatewayv1categoriesuuidB5D5252D:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Ref: ShopyApigatewayv1categories128552B2
+      PathPart: "{uuid}"
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/categories/{uuid}/Resource
+  ShopyApigatewayv1categoriesuuidOPTIONS5906A9E2:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      Integration:
+        IntegrationResponses:
+          - ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+            StatusCode: "204"
+        RequestTemplates:
+          application/json: "{ statusCode: 200 }"
+        Type: MOCK
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Methods: true
+          StatusCode: "204"
+      ResourceId:
+        Ref: ShopyApigatewayv1categoriesuuidB5D5252D
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/categories/{uuid}/OPTIONS/Resource
+  ShopyApigatewayv1categoriesuuidDELETEApiPermissionShopyStackShopyApigateway9D783C75DELETEv1categoriesuuid0EA63761:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - CategoryLambdaA2469EB8
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:aws:execute-api:us-east-1:533267321074:"
+            - Ref: ShopyApigateway4D92DCDB
+            - /
+            - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+            - /DELETE/v1/categories/*
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/categories/{uuid}/DELETE/ApiPermission.ShopyStackShopyApigateway9D783C75.DELETE..v1.categories.{uuid}
+  ShopyApigatewayv1categoriesuuidDELETED5F5645E:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: DELETE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ""
+            - - arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - CategoryLambdaA2469EB8
+                  - Arn
+              - /invocations
+      ResourceId:
+        Ref: ShopyApigatewayv1categoriesuuidB5D5252D
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/categories/{uuid}/DELETE/Resource
+  ShopyApigatewayv1categoriesGETApiPermissionShopyStackShopyApigateway9D783C75GETv1categories42DCCDEC:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - CategoryLambdaA2469EB8
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:aws:execute-api:us-east-1:533267321074:"
+            - Ref: ShopyApigateway4D92DCDB
+            - /
+            - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+            - /GET/v1/categories
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/categories/GET/ApiPermission.ShopyStackShopyApigateway9D783C75.GET..v1.categories
+  ShopyApigatewayv1categoriesGET455E0277:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: GET
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ""
+            - - arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - CategoryLambdaA2469EB8
+                  - Arn
+              - /invocations
+      ResourceId:
+        Ref: ShopyApigatewayv1categories128552B2
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/categories/GET/Resource
+  ShopyApigatewayv1categoriesPOSTApiPermissionShopyStackShopyApigateway9D783C75POSTv1categoriesA573D346:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - CategoryLambdaA2469EB8
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:aws:execute-api:us-east-1:533267321074:"
+            - Ref: ShopyApigateway4D92DCDB
+            - /
+            - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+            - /POST/v1/categories
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/categories/POST/ApiPermission.ShopyStackShopyApigateway9D783C75.POST..v1.categories
+  ShopyApigatewayv1categoriesPOSTC8B7C30A:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: POST
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ""
+            - - arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - CategoryLambdaA2469EB8
+                  - Arn
+              - /invocations
+      ResourceId:
+        Ref: ShopyApigatewayv1categories128552B2
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/categories/POST/Resource
+  ShopyApigatewayv1products3B5C66F7:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Ref: ShopyApigatewayv1D6446B65
+      PathPart: products
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/products/Resource
+  ShopyApigatewayv1productsOPTIONSAB9C90A4:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      Integration:
+        IntegrationResponses:
+          - ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+            StatusCode: "204"
+        RequestTemplates:
+          application/json: "{ statusCode: 200 }"
+        Type: MOCK
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Methods: true
+          StatusCode: "204"
+      ResourceId:
+        Ref: ShopyApigatewayv1products3B5C66F7
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/products/OPTIONS/Resource
+  ShopyApigatewayv1productsuuid1D339BA5:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Ref: ShopyApigatewayv1products3B5C66F7
+      PathPart: "{uuid}"
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/products/{uuid}/Resource
+  ShopyApigatewayv1productsuuidOPTIONSD9865C7C:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      Integration:
+        IntegrationResponses:
+          - ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+            StatusCode: "204"
+        RequestTemplates:
+          application/json: "{ statusCode: 200 }"
+        Type: MOCK
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Methods: true
+          StatusCode: "204"
+      ResourceId:
+        Ref: ShopyApigatewayv1productsuuid1D339BA5
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/products/{uuid}/OPTIONS/Resource
+  ShopyApigatewayv1productsuuidPUTApiPermissionShopyStackShopyApigateway9D783C75PUTv1productsuuid3BD8C1F1:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - ProductLambda4F8330F3
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:aws:execute-api:us-east-1:533267321074:"
+            - Ref: ShopyApigateway4D92DCDB
+            - /
+            - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+            - /PUT/v1/products/*
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/products/{uuid}/PUT/ApiPermission.ShopyStackShopyApigateway9D783C75.PUT..v1.products.{uuid}
+  ShopyApigatewayv1productsuuidPUT603FFF69:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: PUT
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ""
+            - - arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - ProductLambda4F8330F3
+                  - Arn
+              - /invocations
+      ResourceId:
+        Ref: ShopyApigatewayv1productsuuid1D339BA5
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/products/{uuid}/PUT/Resource
+  ShopyApigatewayv1productsuuidDELETEApiPermissionShopyStackShopyApigateway9D783C75DELETEv1productsuuidB9C84D96:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - ProductLambda4F8330F3
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:aws:execute-api:us-east-1:533267321074:"
+            - Ref: ShopyApigateway4D92DCDB
+            - /
+            - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+            - /DELETE/v1/products/*
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/products/{uuid}/DELETE/ApiPermission.ShopyStackShopyApigateway9D783C75.DELETE..v1.products.{uuid}
+  ShopyApigatewayv1productsuuidDELETE40962E74:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: DELETE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ""
+            - - arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - ProductLambda4F8330F3
+                  - Arn
+              - /invocations
+      ResourceId:
+        Ref: ShopyApigatewayv1productsuuid1D339BA5
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/products/{uuid}/DELETE/Resource
+  ShopyApigatewayv1productsGETApiPermissionShopyStackShopyApigateway9D783C75GETv1products204E27EE:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - ProductLambda4F8330F3
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:aws:execute-api:us-east-1:533267321074:"
+            - Ref: ShopyApigateway4D92DCDB
+            - /
+            - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+            - /GET/v1/products
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/products/GET/ApiPermission.ShopyStackShopyApigateway9D783C75.GET..v1.products
+  ShopyApigatewayv1productsGET9C633455:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: GET
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ""
+            - - arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - ProductLambda4F8330F3
+                  - Arn
+              - /invocations
+      ResourceId:
+        Ref: ShopyApigatewayv1products3B5C66F7
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/products/GET/Resource
+  ShopyApigatewayv1productsPOSTApiPermissionShopyStackShopyApigateway9D783C75POSTv1productsC38A8CEB:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - ProductLambda4F8330F3
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:aws:execute-api:us-east-1:533267321074:"
+            - Ref: ShopyApigateway4D92DCDB
+            - /
+            - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+            - /POST/v1/products
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/products/POST/ApiPermission.ShopyStackShopyApigateway9D783C75.POST..v1.products
+  ShopyApigatewayv1productsPOST857BDC03:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: POST
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ""
+            - - arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - ProductLambda4F8330F3
+                  - Arn
+              - /invocations
+      ResourceId:
+        Ref: ShopyApigatewayv1products3B5C66F7
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/products/POST/Resource
+  ShopyApigatewayv1users8C61DECB:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Ref: ShopyApigatewayv1D6446B65
+      PathPart: users
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/users/Resource
+  ShopyApigatewayv1usersOPTIONS9C90D5C0:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      Integration:
+        IntegrationResponses:
+          - ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+            StatusCode: "204"
+        RequestTemplates:
+          application/json: "{ statusCode: 200 }"
+        Type: MOCK
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Methods: true
+          StatusCode: "204"
+      ResourceId:
+        Ref: ShopyApigatewayv1users8C61DECB
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/users/OPTIONS/Resource
+  ShopyApigatewayv1usersemailE464452D:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Ref: ShopyApigatewayv1users8C61DECB
+      PathPart: "{email}"
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/users/{email}/Resource
+  ShopyApigatewayv1usersemailOPTIONSA854005C:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      Integration:
+        IntegrationResponses:
+          - ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+            StatusCode: "204"
+        RequestTemplates:
+          application/json: "{ statusCode: 200 }"
+        Type: MOCK
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Methods: true
+          StatusCode: "204"
+      ResourceId:
+        Ref: ShopyApigatewayv1usersemailE464452D
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/users/{email}/OPTIONS/Resource
+  ShopyApigatewayv1usersemailDELETEApiPermissionShopyStackShopyApigateway9D783C75DELETEv1usersemail649A2C04:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - UserLambdaAD4FB23B
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:aws:execute-api:us-east-1:533267321074:"
+            - Ref: ShopyApigateway4D92DCDB
+            - /
+            - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+            - /DELETE/v1/users/*
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/users/{email}/DELETE/ApiPermission.ShopyStackShopyApigateway9D783C75.DELETE..v1.users.{email}
+  ShopyApigatewayv1usersemailDELETEF330C5FE:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: DELETE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ""
+            - - arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - UserLambdaAD4FB23B
+                  - Arn
+              - /invocations
+      ResourceId:
+        Ref: ShopyApigatewayv1usersemailE464452D
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/users/{email}/DELETE/Resource
+  ShopyApigatewayv1usersPOSTApiPermissionShopyStackShopyApigateway9D783C75POSTv1users24947192:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - UserLambdaAD4FB23B
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:aws:execute-api:us-east-1:533267321074:"
+            - Ref: ShopyApigateway4D92DCDB
+            - /
+            - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+            - /POST/v1/users
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/users/POST/ApiPermission.ShopyStackShopyApigateway9D783C75.POST..v1.users
+  ShopyApigatewayv1usersPOST723282A3:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: POST
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ""
+            - - arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - UserLambdaAD4FB23B
+                  - Arn
+              - /invocations
+      ResourceId:
+        Ref: ShopyApigatewayv1users8C61DECB
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/users/POST/Resource
+  ShopyApigatewayv1usersPUTApiPermissionShopyStackShopyApigateway9D783C75PUTv1users731521C2:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - UserLambdaAD4FB23B
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:aws:execute-api:us-east-1:533267321074:"
+            - Ref: ShopyApigateway4D92DCDB
+            - /
+            - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+            - /PUT/v1/users
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/users/PUT/ApiPermission.ShopyStackShopyApigateway9D783C75.PUT..v1.users
+  ShopyApigatewayv1usersPUT86369EFF:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: PUT
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ""
+            - - arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - UserLambdaAD4FB23B
+                  - Arn
+              - /invocations
+      ResourceId:
+        Ref: ShopyApigatewayv1users8C61DECB
+      RestApiId:
+        Ref: ShopyApigateway4D92DCDB
+    Metadata:
+      aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/users/PUT/Resource
+  CategoryDynamodb8B846F23:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: uuid
+          AttributeType: S
+      KeySchema:
+        - AttributeName: uuid
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TableName: category
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: ShopyStack/CategoryDynamodb/Resource
+  CategoryLambdaServiceRole55DDF3E3:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: ShopyStack/CategoryLambda/ServiceRole/Resource
+  CategoryLambdaServiceRoleDefaultPolicy19BADB96:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:BatchWriteItem
+              - dynamodb:ConditionCheckItem
+              - dynamodb:DeleteItem
+              - dynamodb:DescribeTable
+              - dynamodb:GetItem
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:PutItem
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:UpdateItem
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - CategoryDynamodb8B846F23
+                  - Arn
+              - Ref: AWS::NoValue
+          - Action:
+              - s3:Abort*
+              - s3:DeleteObject*
+              - s3:GetBucket*
+              - s3:GetObject*
+              - s3:List*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ShopyBucketD52CA9C2
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ShopyBucketD52CA9C2
+                        - Arn
+                    - /*
+        Version: "2012-10-17"
+      PolicyName: CategoryLambdaServiceRoleDefaultPolicy19BADB96
+      Roles:
+        - Ref: CategoryLambdaServiceRole55DDF3E3
+    Metadata:
+      aws:cdk:path: ShopyStack/CategoryLambda/ServiceRole/DefaultPolicy/Resource
+  CategoryLambdaA2469EB8:
+    Type: AWS::Lambda::Function
+    Properties:
+      Architectures:
+        - arm64
+      Code:
+        S3Bucket: cdk-hnb659fds-assets-533267321074-us-east-1
+        S3Key: b74e4e2dcb2a516ca007e50b7b53a43e5e3d3481254783dcb3461e23b99f10fd.zip
+      Environment:
+        Variables:
+          BUCKET_NAME:
+            Ref: ShopyBucketD52CA9C2
+      FunctionName: manage-category
+      Handler: bootstrap
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - CategoryLambdaServiceRole55DDF3E3
+          - Arn
+      Runtime: provided.al2023
+      Timeout: 30
+    DependsOn:
+      - CategoryLambdaServiceRoleDefaultPolicy19BADB96
+      - CategoryLambdaServiceRole55DDF3E3
+    Metadata:
+      aws:cdk:path: ShopyStack/CategoryLambda/Resource
+      aws:asset:path: asset.b74e4e2dcb2a516ca007e50b7b53a43e5e3d3481254783dcb3461e23b99f10fd.zip
+      aws:asset:is-bundled: false
+      aws:asset:property: Code
+  ProductDynamodb0231AF77:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: uuid
+          AttributeType: S
+        - AttributeName: category_uuid
+          AttributeType: S
+        - AttributeName: qrcode
+          AttributeType: S
+      GlobalSecondaryIndexes:
+        - IndexName: GSI_CATEGORY
+          KeySchema:
+            - AttributeName: category_uuid
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+        - IndexName: GSI_QRCODE
+          KeySchema:
+            - AttributeName: qrcode
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+      KeySchema:
+        - AttributeName: uuid
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TableName: product
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: ShopyStack/ProductDynamodb/Resource
+  ProductLambdaServiceRoleF3599B51:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: ShopyStack/ProductLambda/ServiceRole/Resource
+  ProductLambdaServiceRoleDefaultPolicy3903364A:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:BatchWriteItem
+              - dynamodb:ConditionCheckItem
+              - dynamodb:DeleteItem
+              - dynamodb:DescribeTable
+              - dynamodb:GetItem
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:PutItem
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:UpdateItem
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ProductDynamodb0231AF77
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ProductDynamodb0231AF77
+                        - Arn
+                    - /index/*
+          - Action:
+              - s3:Abort*
+              - s3:DeleteObject*
+              - s3:GetBucket*
+              - s3:GetObject*
+              - s3:List*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ShopyBucketD52CA9C2
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ShopyBucketD52CA9C2
+                        - Arn
+                    - /*
+        Version: "2012-10-17"
+      PolicyName: ProductLambdaServiceRoleDefaultPolicy3903364A
+      Roles:
+        - Ref: ProductLambdaServiceRoleF3599B51
+    Metadata:
+      aws:cdk:path: ShopyStack/ProductLambda/ServiceRole/DefaultPolicy/Resource
+  ProductLambda4F8330F3:
+    Type: AWS::Lambda::Function
+    Properties:
+      Architectures:
+        - arm64
+      Code:
+        S3Bucket: cdk-hnb659fds-assets-533267321074-us-east-1
+        S3Key: 21220524a7a17d32e251899363cd27cfe236c6e5088602813e3ece29017e693e.zip
+      Environment:
+        Variables:
+          BUCKET_NAME:
+            Ref: ShopyBucketD52CA9C2
+      FunctionName: manage-product
+      Handler: bootstrap
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - ProductLambdaServiceRoleF3599B51
+          - Arn
+      Runtime: provided.al2023
+      Timeout: 30
+    DependsOn:
+      - ProductLambdaServiceRoleDefaultPolicy3903364A
+      - ProductLambdaServiceRoleF3599B51
+    Metadata:
+      aws:cdk:path: ShopyStack/ProductLambda/Resource
+      aws:asset:path: asset.21220524a7a17d32e251899363cd27cfe236c6e5088602813e3ece29017e693e.zip
+      aws:asset:is-bundled: false
+      aws:asset:property: Code
+  UserDynamodbA9205E14:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: email
+          AttributeType: S
+      KeySchema:
+        - AttributeName: email
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TableName: user
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: ShopyStack/UserDynamodb/Resource
+  UserLambdaServiceRole0C79BFF0:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: ShopyStack/UserLambda/ServiceRole/Resource
+  UserLambdaServiceRoleDefaultPolicy30940387:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:BatchWriteItem
+              - dynamodb:ConditionCheckItem
+              - dynamodb:DeleteItem
+              - dynamodb:DescribeTable
+              - dynamodb:GetItem
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:PutItem
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:UpdateItem
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - UserDynamodbA9205E14
+                  - Arn
+              - Ref: AWS::NoValue
+        Version: "2012-10-17"
+      PolicyName: UserLambdaServiceRoleDefaultPolicy30940387
+      Roles:
+        - Ref: UserLambdaServiceRole0C79BFF0
+    Metadata:
+      aws:cdk:path: ShopyStack/UserLambda/ServiceRole/DefaultPolicy/Resource
+  UserLambdaAD4FB23B:
+    Type: AWS::Lambda::Function
+    Properties:
+      Architectures:
+        - arm64
+      Code:
+        S3Bucket: cdk-hnb659fds-assets-533267321074-us-east-1
+        S3Key: 72b6014bf87fbd2f203f03b517ace39a60c3b30c7b0696be398242902df1b6e4.zip
+      Environment:
+        Variables:
+          TOKEN_EXP: "24"
+          TOKEN_KEY: secret
+      FunctionName: manage-user
+      Handler: bootstrap
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - UserLambdaServiceRole0C79BFF0
+          - Arn
+      Runtime: provided.al2023
+      Timeout: 30
+    DependsOn:
+      - UserLambdaServiceRoleDefaultPolicy30940387
+      - UserLambdaServiceRole0C79BFF0
+    Metadata:
+      aws:cdk:path: ShopyStack/UserLambda/Resource
+      aws:asset:path: asset.72b6014bf87fbd2f203f03b517ace39a60c3b30c7b0696be398242902df1b6e4.zip
+      aws:asset:is-bundled: false
+      aws:asset:property: Code
+  CDKMetadata:
+    Type: AWS::CDK::Metadata
+    Properties:
+      Analytics: v2:deflate64:H4sIAAAAAAAA/22PwW7CMBBEv4W7MQog7pCqt6oo9I428ZIuxHaUtUsjK/9e2UmUqupp3s56R56tzA57ma3gyetKPdYNlTJcHFQPAU++Bt7JcPLVA53Ib2aiUc62oapf7GkehxMwDgJaqsHhE3oZCmR3bCm+n/EF28b2Gk0K/zVdHNQYvREKZOu7CmOoeEP3aVVcTjRvp+TEg2hAlwpkyG/mjJ0mZrJGvHpTuQj5zcw8CNUb0FaVMnxA2aSgBIMg0DIUdvSSLq1HGgTvrsCMjuUxyiByz87q/771Z3Xu7Bcp7FKvdBz7kqnjzbt3rXdiaVTbTG4zme02DRn/vQGtDvvVnYnWnTeONMpi1B/oq/SA1QEAAA==
+    Metadata:
+      aws:cdk:path: ShopyStack/CDKMetadata/Default
+Outputs:
+  ShopyApigatewayEndpoint49B68D93:
+    Value:
+      Fn::Join:
+        - ""
+        - - https://
+          - Ref: ShopyApigateway4D92DCDB
+          - .execute-api.us-east-1.
+          - Ref: AWS::URLSuffix
+          - /
+          - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+          - /
+Parameters:
+  BootstrapVersion:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /cdk-bootstrap/hnb659fds/version
+    Description: Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]
+

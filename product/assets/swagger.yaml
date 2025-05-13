@@ -1,0 +1,297 @@
+basePath: /dev/v1
+definitions:
+  apigateway.CategoryRequest:
+    properties:
+      name:
+        type: string
+      uuid:
+        type: string
+    type: object
+  apigateway.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      datetime:
+        type: string
+      errors:
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  apigateway.ProductAddRequest:
+    properties:
+      category:
+        $ref: '#/definitions/apigateway.CategoryRequest'
+      image:
+        type: string
+      is_top:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: number
+      qrcode:
+        type: string
+    type: object
+  apigateway.ProductAdded:
+    properties:
+      code:
+        type: integer
+      datetime:
+        type: string
+      product:
+        $ref: '#/definitions/models.Product'
+      status:
+        type: string
+    type: object
+  apigateway.ProductDeleted:
+    properties:
+      code:
+        type: integer
+      datetime:
+        type: string
+      product:
+        type: string
+      status:
+        type: string
+    type: object
+  apigateway.ProductPutRequest:
+    properties:
+      category:
+        $ref: '#/definitions/apigateway.CategoryRequest'
+      image:
+        type: string
+      is_top:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: number
+      qrcode:
+        type: string
+    type: object
+  apigateway.SelectedProducts:
+    properties:
+      code:
+        type: integer
+      datetime:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/models.Product'
+        type: array
+      status:
+        type: string
+    type: object
+  models.Category:
+    properties:
+      name:
+        type: string
+      uuid:
+        type: string
+    type: object
+  models.Product:
+    properties:
+      category:
+        $ref: '#/definitions/models.Category'
+      created_at:
+        type: string
+      image:
+        type: string
+      is_top:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: number
+      qrcode:
+        type: string
+      updated_at:
+        type: string
+      uuid:
+        type: string
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: 127.0.0.1:3000
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: Testing Swagger APIs.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Product Lambda Function
+  version: "1.0"
+paths:
+  /products:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves products using query parameters, only one parameter can
+        be used at a time. By default, the top products are returned.
+      parameters:
+      - description: Product name
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: Product QR code
+        in: query
+        name: qrcode
+        required: true
+        type: string
+      - description: Product category UUID
+        in: query
+        name: category_uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/apigateway.SelectedProducts'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+        "500":
+          description: Error Internal Server
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+      security:
+      - JWT: []
+      summary: Get products.
+      tags:
+      - Products
+    post:
+      consumes:
+      - application/json
+      description: Add new product.
+      parameters:
+      - description: Product
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/apigateway.ProductAddRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Success
+          schema:
+            $ref: '#/definitions/apigateway.ProductAdded'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+        "500":
+          description: Error Internal Server
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+      security:
+      - JWT: []
+      summary: Add product.
+      tags:
+      - Products
+  /products/{uuid}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete product and image.
+      parameters:
+      - description: Product UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/apigateway.ProductDeleted'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+        "500":
+          description: Error Internal Server
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+      security:
+      - JWT: []
+      summary: Delete product.
+      tags:
+      - Products
+    put:
+      consumes:
+      - application/json
+      description: Update product and image fields.
+      parameters:
+      - description: Product UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: Product
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/apigateway.ProductPutRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Success
+          schema:
+            $ref: '#/definitions/apigateway.ProductAdded'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+        "500":
+          description: Error Internal Server
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+      security:
+      - JWT: []
+      summary: Update product.
+      tags:
+      - Products
+schemes:
+- http
+- https
+securityDefinitions:
+  JWT:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

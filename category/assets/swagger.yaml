@@ -1,0 +1,195 @@
+basePath: /dev/v1
+definitions:
+  apigateway.CategoryAddRequest:
+    properties:
+      image:
+        type: string
+      name:
+        type: string
+    type: object
+  apigateway.CategoryAdded:
+    properties:
+      category:
+        $ref: '#/definitions/models.Category'
+      code:
+        type: integer
+      datetime:
+        type: string
+      status:
+        type: string
+    type: object
+  apigateway.CategoryDeleted:
+    properties:
+      category:
+        type: string
+      code:
+        type: integer
+      datetime:
+        type: string
+      status:
+        type: string
+    type: object
+  apigateway.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      datetime:
+        type: string
+      errors:
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  apigateway.SelectedCategories:
+    properties:
+      categories:
+        items:
+          $ref: '#/definitions/models.Category'
+        type: array
+      code:
+        type: integer
+      datetime:
+        type: string
+      status:
+        type: string
+    type: object
+  models.Category:
+    properties:
+      created_at:
+        type: string
+      image:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+      uuid:
+        type: string
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: 127.0.0.1:3000
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: Testing Swagger APIs.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Category Lambda Function
+  version: "1.0"
+paths:
+  /categories:
+    get:
+      consumes:
+      - application/json
+      description: Get product categories by store.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/apigateway.SelectedCategories'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+        "500":
+          description: Error Internal Server
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+      security:
+      - JWT: []
+      summary: Get categories.
+      tags:
+      - Categories
+    post:
+      consumes:
+      - application/json
+      description: Add new product category.
+      parameters:
+      - description: Category
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/apigateway.CategoryAddRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Success
+          schema:
+            $ref: '#/definitions/apigateway.CategoryAdded'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+        "500":
+          description: Error Internal Server
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+      security:
+      - JWT: []
+      summary: Add category.
+      tags:
+      - Categories
+  /categories/{uuid}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete product category.
+      parameters:
+      - description: Category UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/apigateway.CategoryDeleted'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+        "500":
+          description: Error Internal Server
+          schema:
+            $ref: '#/definitions/apigateway.ErrorResponse'
+      security:
+      - JWT: []
+      summary: Delete category.
+      tags:
+      - Categories
+schemes:
+- http
+- https
+securityDefinitions:
+  JWT:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

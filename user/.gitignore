@@ -1,0 +1,6 @@
+*.log
+.env
+.idea/
+linter.txt
+assets/bootstrap
+assets/lambda.zip
