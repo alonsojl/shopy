@@ -1,5 +1,3 @@
-##@ General
-
 # The help target prints out all targets with their descriptions organized
 # beneath their categories. The categories are represented by '##@' and the
 # target descriptions by '##'. The awk commands is responsible for reading the
@@ -11,26 +9,22 @@
 # More info on the awk command:
 # http://linuxcommand.org/lc3_adv_awk.php
 
-## Display this help.
+##@ Development
+
 .PHONY: help
 help:
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
-##@ Development
-
-## Lint source code.
 .PHONY: linter
-linter:
+linter: ## Lint source code.
 	@golangci-lint run -c .golangci.yml > linter.txt
 
-## Generate swagger documentation.
 .PHONY: swagger
-swagger:
+swagger: ## Generate swagger documentation.
 	@swag init --ot yaml,json -o ./assets -g ./lambda/main.go
 
-# Build lambda function and compress it into a zip file.
 .PHONY: lambda
-lambda:
+lambda: ## Build lambda function and compress it into a zip file.
 	@rm -rf ./assets/lambda.zip ./assets/bootstrap
 	@GOOS=linux GOARCH=arm64 go build -o ./assets/bootstrap ./lambda/*.go
 	@zip -j ./assets/lambda.zip ./assets/bootstrap

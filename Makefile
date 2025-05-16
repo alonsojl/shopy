@@ -1,5 +1,3 @@
-##@ General
-
 # The help target prints out all targets with their descriptions organized
 # beneath their categories. The categories are represented by '##@' and the
 # target descriptions by '##'. The awk commands is responsible for reading the
@@ -13,43 +11,36 @@
 
 lambdas := category product user
 
-## Display this help.
+##@ Development
+
 .PHONY: help
 help:
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
-##@ Development
-
-## Start container services.
 .PHONY: up
-up:
+up: ## Start container services.
 	@docker compose up -d
 	
-## Stop container services.
 .PHONY: down
-down:
+down: ## Stop container services.
 	@docker compose down
 
-## Deploy the stack into your AWS account.
 .PHONY: deploy
-deploy:
+deploy: ## Deploy the stack into your AWS account.
 	@cdk deploy
 
-## Destroy the stack from your AWS account.
 .PHONY: destroy
-destroy:
+destroy: ## Destroy the stack from your AWS account.
 	@cdk destroy
 
 .PHONY: lambdas
 lambdas: ## Build lambda functions.
 	@$(foreach lambda, $(lambdas), (cd $(lambda) && $(MAKE) lambda);)
 
-## Run & test AWS serverless functions locally as a HTTP API.
 .PHONY: local
-local: template
+local: template ## Run & test AWS serverless functions locally as a HTTP API.
 	@sam local start-api --template cdk.out/ShopyStack.template.json
 
-## Generate a CloudFormation template in YAML format.
 .PHONY: template
-template:
+template: ## Generate a CloudFormation template in YAML format.
 	@cdk synth > template.yaml

@@ -1,12 +1,6 @@
-# Welcome to your CDK Go project!
+# Welcome to Shopy project!
 
-This is a blank project for CDK development with Go.
+This is a serverless application built with Go.
 
-The `cdk.json` file tells the CDK toolkit how to execute your app.
-
-## Useful commands
-
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk synth`       emits the synthesized CloudFormation template
- * `go test`         run unit tests
+- Run `make help` to see available commands.
+- Check the [Swagger](http://localhost:8088) documentation once the container is running.

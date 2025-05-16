@@ -3,14 +3,14 @@ services:
     command: tail -f /dev/null
     build: ./
     volumes:
-      - ./:/home/lalupe  
+      - ./:/home/shopy  
   swagger-ui:
     image: swaggerapi/swagger-ui
     ports:
       - "8088:8080"
     volumes:
-      - ./category/assets/:/usr/share/nginx/html/category
-      - ./product/assets/:/usr/share/nginx/html/product
-      - ./user/assets/:/usr/share/nginx/html/user
+      - ./category/assets/swagger.json:/usr/share/nginx/html/category.json
+      - ./product/assets/swagger.json:/usr/share/nginx/html/product.json
+      - ./user/assets/swagger.json:/usr/share/nginx/html/user.json
     environment:
-      URLS: "[{ url: \"./category/swagger.json\", name: \"Category\" },{ url: \"./product/swagger.json\", name: \"Product\" },{ url: \"./user/swagger.json\", name: \"User\" }]"
+      URLS: "[{ url: \"./category.json\", name: \"Category\" },{ url: \"./product.json\", name: \"Product\" },{ url: \"./user.json\", name: \"User\" }]"

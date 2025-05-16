@@ -1,6 +1,6 @@
 FROM golang:1.21-alpine
 
-WORKDIR /home/lalupe
+WORKDIR /home/shopy
 
 COPY go.mod go.sum ./
 RUN go mod download
