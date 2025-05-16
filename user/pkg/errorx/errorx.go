@@ -5,15 +5,16 @@ import (
 )
 
 type (
-	// ErrorCode defines supported error codes.
-	ErrorCode uint
+	// Code defines supported error codes.
+	Code uint
 
 	// Error interface represents an wrap error.
 	Error interface {
 		Error() string
+		Message() string
 		Wrap(err error) Error
 		Unwrap() error
-		Code() ErrorCode
+		Code() Code
 	}
 
 	// ObjectError is the default wrap error
@@ -21,12 +22,12 @@ type (
 	ObjectError struct {
 		err  error
 		msg  string
-		code ErrorCode
+		code Code
 	}
 )
 
 // WrapErrorf returns a wrapped error.
-func WrapErrorf(err error, code ErrorCode, format string, a ...interface{}) Error {
+func WrapErrorf(err error, code Code, format string, a ...any) Error {
 	return &ObjectError{
 		err:  err,
 		code: code,
@@ -35,12 +36,20 @@ func WrapErrorf(err error, code ErrorCode, format string, a ...interface{}) Erro
 }
 
 // NewErrorf instantiates a new error.
-func NewErrorf(code ErrorCode, format string, a ...interface{}) Error {
+func NewErrorf(code Code, format string, a ...any) Error {
 	return WrapErrorf(nil, code, format, a...)
 }
 
 // Error returns the message, when wrapping errors the wrapped error is returned.
 func (e *ObjectError) Error() string {
+	if e.err != nil {
+		return fmt.Sprintf("%s: %v", e.msg, e.err)
+	}
+	return e.msg
+}
+
+// Message return the error's message.
+func (e *ObjectError) Message() string {
 	return e.msg
 }
 
@@ -56,6 +65,6 @@ func (e *ObjectError) Unwrap() error {
 }
 
 // Code returns the code representing this error.
-func (e *ObjectError) Code() ErrorCode {
+func (e *ObjectError) Code() Code {
 	return e.code
 }

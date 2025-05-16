@@ -37,13 +37,11 @@ func Error(err error) (events.APIGatewayProxyResponse, error) {
 		response.Status = "fail"
 		response.Message = errx.Error()
 		switch errx.Code() {
-		case types.CodeInvalidArgument:
+		case types.CodeBadRequest:
 			response.Code = http.StatusBadRequest
 			if errors.As(errx, &errs) {
 				response.Errors = errs
 			}
-		case types.CodePrecondition:
-			response.Code = http.StatusPreconditionFailed
 		case types.CodeNotFound:
 			response.Code = http.StatusNotFound
 		}

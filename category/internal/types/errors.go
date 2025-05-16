@@ -3,13 +3,12 @@ package types
 import "category/pkg/errorx"
 
 const (
-	CodeInvalidArgument errorx.ErrorCode = iota
-	CodePrecondition
+	CodeBadRequest errorx.Code = iota
 	CodeNotFound
 )
 
 var (
-	ErrBodyRequest = errorx.NewErrorf(CodeInvalidArgument, "invalid body request")
-	ErrParams      = errorx.NewErrorf(CodeInvalidArgument, "invalid params")
-	ErrNotFound    = errorx.NewErrorf(CodeNotFound, "item not found")
+	ErrRequest  = errorx.NewErrorf(CodeBadRequest, "invalid body request")
+	ErrParams   = errorx.NewErrorf(CodeBadRequest, "invalid params")
+	ErrNotFound = errorx.NewErrorf(CodeNotFound, "item not found")
 )

@@ -3,7 +3,7 @@ package types
 import "user/pkg/errorx"
 
 const (
-	CodeBadRequest errorx.ErrorCode = iota
+	CodeBadRequest errorx.Code = iota
 	CodeNotFound
 	CodeUnauthorized
 )

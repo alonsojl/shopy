@@ -104,7 +104,7 @@ func (p *Product) HandleAddProduct(ctx context.Context, event events.APIGatewayP
 
 	if err := json.Unmarshal([]byte(event.Body), &request); err != nil {
 		p.logger.Error("invalid product body", "error", err)
-		return Error(types.ErrBodyRequest)
+		return Error(types.ErrRequest)
 	}
 
 	if err := request.Validate(); err != nil {
@@ -115,7 +115,7 @@ func (p *Product) HandleAddProduct(ctx context.Context, event events.APIGatewayP
 	image, err := base64.StdEncoding.DecodeString(request.Image)
 	if err != nil {
 		p.logger.Error("error decoding image", "error", err)
-		return Error(types.ErrBodyRequest)
+		return Error(types.ErrRequest)
 	}
 
 	now := time.Now().UTC()
@@ -167,7 +167,7 @@ func (p *Product) HandlePutProduct(ctx context.Context, event events.APIGatewayP
 
 	if err = json.Unmarshal([]byte(event.Body), &request); err != nil {
 		p.logger.Error("invalid product body", "error", err)
-		return Error(types.ErrBodyRequest)
+		return Error(types.ErrRequest)
 	}
 
 	if err = request.Validate(); err != nil {
@@ -180,7 +180,7 @@ func (p *Product) HandlePutProduct(ctx context.Context, event events.APIGatewayP
 		image, err = base64.StdEncoding.DecodeString(request.Image)
 		if err != nil {
 			p.logger.Error("error decoding image", "error", err)
-			return Error(types.ErrBodyRequest)
+			return Error(types.ErrRequest)
 		}
 	}
 

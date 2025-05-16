@@ -92,7 +92,7 @@ func (c *Category) HandleAddCategory(ctx context.Context, event events.APIGatewa
 
 	if err := json.Unmarshal([]byte(event.Body), &request); err != nil {
 		c.logger.Error("invalid category body", "error", err)
-		return Error(types.ErrBodyRequest)
+		return Error(types.ErrRequest)
 	}
 
 	if err := request.Validate(); err != nil {
@@ -103,7 +103,7 @@ func (c *Category) HandleAddCategory(ctx context.Context, event events.APIGatewa
 	image, err := base64.StdEncoding.DecodeString(request.Image)
 	if err != nil {
 		c.logger.Error("error decoding image", "error", err)
-		return Error(types.ErrBodyRequest)
+		return Error(types.ErrRequest)
 	}
 
 	now := time.Now().UTC()
