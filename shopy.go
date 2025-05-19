@@ -24,8 +24,7 @@ func NewShopyStack(scope constructs.Construct, id string, props *ShopyStackProps
 
 	stack := awscdk.NewStack(scope, &id, &sprops)
 	s3bucket := awss3.NewBucket(stack, jsii.String("ShopyBucket"), &awss3.BucketProps{
-		BucketName:        jsii.String("shopy-images"),
-		AutoDeleteObjects: jsii.Bool(true),
+		BucketName: jsii.String("shopy-images"),
 		BlockPublicAccess: awss3.NewBlockPublicAccess(&awss3.BlockPublicAccessOptions{
 			BlockPublicAcls:       jsii.Bool(false),
 			BlockPublicPolicy:     jsii.Bool(false),
@@ -33,7 +32,7 @@ func NewShopyStack(scope constructs.Construct, id string, props *ShopyStackProps
 			RestrictPublicBuckets: jsii.Bool(false),
 		}),
 		AccessControl: awss3.BucketAccessControl_BUCKET_OWNER_FULL_CONTROL,
-		RemovalPolicy: awscdk.RemovalPolicy_DESTROY,
+		RemovalPolicy: awscdk.RemovalPolicy_RETAIN,
 	})
 
 	s3bucket.AddToResourcePolicy(awsiam.NewPolicyStatement(&awsiam.PolicyStatementProps{
