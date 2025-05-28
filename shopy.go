@@ -50,7 +50,7 @@ func NewShopyStack(scope constructs.Construct, id string, props *ShopyStackProps
 			AllowOrigins: awsapigateway.Cors_ALL_ORIGINS(),
 		},
 		DeployOptions: &awsapigateway.StageOptions{
-			StageName: jsii.String("dev"),
+			StageName: jsii.String("prod"),
 		},
 	})
 
