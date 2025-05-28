@@ -24,7 +24,7 @@ func NewShopyStack(scope constructs.Construct, id string, props *ShopyStackProps
 
 	stack := awscdk.NewStack(scope, &id, &sprops)
 	s3bucket := awss3.NewBucket(stack, jsii.String("ShopyBucket"), &awss3.BucketProps{
-		BucketName: jsii.String("shopy-images"),
+		BucketName: jsii.String("shopy-bucket"),
 		BlockPublicAccess: awss3.NewBlockPublicAccess(&awss3.BlockPublicAccessOptions{
 			BlockPublicAcls:       jsii.Bool(false),
 			BlockPublicPolicy:     jsii.Bool(false),

@@ -3,17 +3,14 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       AccessControl: BucketOwnerFullControl
-      BucketName: shopy-images
+      BucketName: shopy-bucket
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false
         BlockPublicPolicy: false
         IgnorePublicAcls: false
         RestrictPublicBuckets: false
-      Tags:
-        - Key: aws-cdk:auto-delete-objects
-          Value: "true"
-    UpdateReplacePolicy: Delete
-    DeletionPolicy: Delete
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
     Metadata:
       aws:cdk:path: ShopyStack/ShopyBucket/Resource
   ShopyBucketPolicyBB3E4399:
@@ -23,27 +20,6 @@ Resources:
         Ref: ShopyBucketD52CA9C2
       PolicyDocument:
         Statement:
-          - Action:
-              - s3:DeleteObject*
-              - s3:GetBucket*
-              - s3:List*
-              - s3:PutBucketPolicy
-            Effect: Allow
-            Principal:
-              AWS:
-                Fn::GetAtt:
-                  - CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092
-                  - Arn
-            Resource:
-              - Fn::GetAtt:
-                  - ShopyBucketD52CA9C2
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ShopyBucketD52CA9C2
-                        - Arn
-                    - /*
           - Action: s3:GetObject
             Effect: Allow
             Principal:
@@ -58,61 +34,6 @@ Resources:
         Version: "2012-10-17"
     Metadata:
       aws:cdk:path: ShopyStack/ShopyBucket/Policy/Resource
-  ShopyBucketAutoDeleteObjectsCustomResourceEE7DD9F7:
-    Type: Custom::S3AutoDeleteObjects
-    Properties:
-      ServiceToken:
-        Fn::GetAtt:
-          - CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F
-          - Arn
-      BucketName:
-        Ref: ShopyBucketD52CA9C2
-    DependsOn:
-      - ShopyBucketPolicyBB3E4399
-    UpdateReplacePolicy: Delete
-    DeletionPolicy: Delete
-    Metadata:
-      aws:cdk:path: ShopyStack/ShopyBucket/AutoDeleteObjectsCustomResource/Default
-  CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Action: sts:AssumeRole
-            Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-      ManagedPolicyArns:
-        - Fn::Sub: arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-    Metadata:
-      aws:cdk:path: ShopyStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role
-  CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: cdk-hnb659fds-assets-533267321074-us-east-1
-        S3Key: faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip
-      Timeout: 900
-      MemorySize: 128
-      Handler: index.handler
-      Role:
-        Fn::GetAtt:
-          - CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092
-          - Arn
-      Runtime: nodejs20.x
-      Description:
-        Fn::Join:
-          - ""
-          - - "Lambda function for auto-deleting objects in "
-            - Ref: ShopyBucketD52CA9C2
-            - " S3 bucket."
-    DependsOn:
-      - CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092
-    Metadata:
-      aws:cdk:path: ShopyStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler
-      aws:asset:path: asset.faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6
-      aws:asset:property: Code
   ShopyApigateway4D92DCDB:
     Type: AWS::ApiGateway::RestApi
     Properties:
@@ -153,16 +74,16 @@ Resources:
       - ShopyApigatewayv1users8C61DECB
     Metadata:
       aws:cdk:path: ShopyStack/ShopyApigateway/Deployment/Resource
-  ShopyApigatewayDeploymentStagedev5B0ED329:
+  ShopyApigatewayDeploymentStageprod1C42062C:
     Type: AWS::ApiGateway::Stage
     Properties:
       DeploymentId:
         Ref: ShopyApigatewayDeployment1A72006768ed2ceef19f93c9b20ba4c423f2c796
       RestApiId:
         Ref: ShopyApigateway4D92DCDB
-      StageName: dev
+      StageName: prod
     Metadata:
-      aws:cdk:path: ShopyStack/ShopyApigateway/DeploymentStage.dev/Resource
+      aws:cdk:path: ShopyStack/ShopyApigateway/DeploymentStage.prod/Resource
   ShopyApigatewayOPTIONSA0E102E1:
     Type: AWS::ApiGateway::Method
     Properties:
@@ -321,10 +242,10 @@ Resources:
       SourceArn:
         Fn::Join:
           - ""
-          - - "arn:aws:execute-api:us-east-1:533267321074:"
+          - - "arn:aws:execute-api:us-east-1:495456316389:"
             - Ref: ShopyApigateway4D92DCDB
             - /
-            - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+            - Ref: ShopyApigatewayDeploymentStageprod1C42062C
             - /DELETE/v1/categories/*
     Metadata:
       aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/categories/{uuid}/DELETE/ApiPermission.ShopyStackShopyApigateway9D783C75.DELETE..v1.categories.{uuid}
@@ -362,10 +283,10 @@ Resources:
       SourceArn:
         Fn::Join:
           - ""
-          - - "arn:aws:execute-api:us-east-1:533267321074:"
+          - - "arn:aws:execute-api:us-east-1:495456316389:"
             - Ref: ShopyApigateway4D92DCDB
             - /
-            - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+            - Ref: ShopyApigatewayDeploymentStageprod1C42062C
             - /GET/v1/categories
     Metadata:
       aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/categories/GET/ApiPermission.ShopyStackShopyApigateway9D783C75.GET..v1.categories
@@ -403,10 +324,10 @@ Resources:
       SourceArn:
         Fn::Join:
           - ""
-          - - "arn:aws:execute-api:us-east-1:533267321074:"
+          - - "arn:aws:execute-api:us-east-1:495456316389:"
             - Ref: ShopyApigateway4D92DCDB
             - /
-            - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+            - Ref: ShopyApigatewayDeploymentStageprod1C42062C
             - /POST/v1/categories
     Metadata:
       aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/categories/POST/ApiPermission.ShopyStackShopyApigateway9D783C75.POST..v1.categories
@@ -520,10 +441,10 @@ Resources:
       SourceArn:
         Fn::Join:
           - ""
-          - - "arn:aws:execute-api:us-east-1:533267321074:"
+          - - "arn:aws:execute-api:us-east-1:495456316389:"
             - Ref: ShopyApigateway4D92DCDB
             - /
-            - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+            - Ref: ShopyApigatewayDeploymentStageprod1C42062C
             - /PUT/v1/products/*
     Metadata:
       aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/products/{uuid}/PUT/ApiPermission.ShopyStackShopyApigateway9D783C75.PUT..v1.products.{uuid}
@@ -561,10 +482,10 @@ Resources:
       SourceArn:
         Fn::Join:
           - ""
-          - - "arn:aws:execute-api:us-east-1:533267321074:"
+          - - "arn:aws:execute-api:us-east-1:495456316389:"
             - Ref: ShopyApigateway4D92DCDB
             - /
-            - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+            - Ref: ShopyApigatewayDeploymentStageprod1C42062C
             - /DELETE/v1/products/*
     Metadata:
       aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/products/{uuid}/DELETE/ApiPermission.ShopyStackShopyApigateway9D783C75.DELETE..v1.products.{uuid}
@@ -602,10 +523,10 @@ Resources:
       SourceArn:
         Fn::Join:
           - ""
-          - - "arn:aws:execute-api:us-east-1:533267321074:"
+          - - "arn:aws:execute-api:us-east-1:495456316389:"
             - Ref: ShopyApigateway4D92DCDB
             - /
-            - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+            - Ref: ShopyApigatewayDeploymentStageprod1C42062C
             - /GET/v1/products
     Metadata:
       aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/products/GET/ApiPermission.ShopyStackShopyApigateway9D783C75.GET..v1.products
@@ -643,10 +564,10 @@ Resources:
       SourceArn:
         Fn::Join:
           - ""
-          - - "arn:aws:execute-api:us-east-1:533267321074:"
+          - - "arn:aws:execute-api:us-east-1:495456316389:"
             - Ref: ShopyApigateway4D92DCDB
             - /
-            - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+            - Ref: ShopyApigatewayDeploymentStageprod1C42062C
             - /POST/v1/products
     Metadata:
       aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/products/POST/ApiPermission.ShopyStackShopyApigateway9D783C75.POST..v1.products
@@ -760,10 +681,10 @@ Resources:
       SourceArn:
         Fn::Join:
           - ""
-          - - "arn:aws:execute-api:us-east-1:533267321074:"
+          - - "arn:aws:execute-api:us-east-1:495456316389:"
             - Ref: ShopyApigateway4D92DCDB
             - /
-            - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+            - Ref: ShopyApigatewayDeploymentStageprod1C42062C
             - /DELETE/v1/users/*
     Metadata:
       aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/users/{email}/DELETE/ApiPermission.ShopyStackShopyApigateway9D783C75.DELETE..v1.users.{email}
@@ -801,10 +722,10 @@ Resources:
       SourceArn:
         Fn::Join:
           - ""
-          - - "arn:aws:execute-api:us-east-1:533267321074:"
+          - - "arn:aws:execute-api:us-east-1:495456316389:"
             - Ref: ShopyApigateway4D92DCDB
             - /
-            - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+            - Ref: ShopyApigatewayDeploymentStageprod1C42062C
             - /POST/v1/users
     Metadata:
       aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/users/POST/ApiPermission.ShopyStackShopyApigateway9D783C75.POST..v1.users
@@ -842,10 +763,10 @@ Resources:
       SourceArn:
         Fn::Join:
           - ""
-          - - "arn:aws:execute-api:us-east-1:533267321074:"
+          - - "arn:aws:execute-api:us-east-1:495456316389:"
             - Ref: ShopyApigateway4D92DCDB
             - /
-            - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+            - Ref: ShopyApigatewayDeploymentStageprod1C42062C
             - /PUT/v1/users
     Metadata:
       aws:cdk:path: ShopyStack/ShopyApigateway/Default/v1/users/PUT/ApiPermission.ShopyStackShopyApigateway9D783C75.PUT..v1.users
@@ -964,7 +885,7 @@ Resources:
       Architectures:
         - arm64
       Code:
-        S3Bucket: cdk-hnb659fds-assets-533267321074-us-east-1
+        S3Bucket: cdk-hnb659fds-assets-495456316389-us-east-1
         S3Key: b74e4e2dcb2a516ca007e50b7b53a43e5e3d3481254783dcb3461e23b99f10fd.zip
       Environment:
         Variables:
@@ -1108,7 +1029,7 @@ Resources:
       Architectures:
         - arm64
       Code:
-        S3Bucket: cdk-hnb659fds-assets-533267321074-us-east-1
+        S3Bucket: cdk-hnb659fds-assets-495456316389-us-east-1
         S3Key: 21220524a7a17d32e251899363cd27cfe236c6e5088602813e3ece29017e693e.zip
       Environment:
         Variables:
@@ -1202,7 +1123,7 @@ Resources:
       Architectures:
         - arm64
       Code:
-        S3Bucket: cdk-hnb659fds-assets-533267321074-us-east-1
+        S3Bucket: cdk-hnb659fds-assets-495456316389-us-east-1
         S3Key: 72b6014bf87fbd2f203f03b517ace39a60c3b30c7b0696be398242902df1b6e4.zip
       Environment:
         Variables:
@@ -1228,7 +1149,7 @@ Resources:
   CDKMetadata:
     Type: AWS::CDK::Metadata
     Properties:
-      Analytics: v2:deflate64:H4sIAAAAAAAA/22PwW7CMBBEv4W7MQog7pCqt6oo9I428ZIuxHaUtUsjK/9e2UmUqupp3s56R56tzA57ma3gyetKPdYNlTJcHFQPAU++Bt7JcPLVA53Ib2aiUc62oapf7GkehxMwDgJaqsHhE3oZCmR3bCm+n/EF28b2Gk0K/zVdHNQYvREKZOu7CmOoeEP3aVVcTjRvp+TEg2hAlwpkyG/mjJ0mZrJGvHpTuQj5zcw8CNUb0FaVMnxA2aSgBIMg0DIUdvSSLq1HGgTvrsCMjuUxyiByz87q/771Z3Xu7Bcp7FKvdBz7kqnjzbt3rXdiaVTbTG4zme02DRn/vQGtDvvVnYnWnTeONMpi1B/oq/SA1QEAAA==
+      Analytics: v2:deflate64:H4sIAAAAAAAA/1WPzW6DMBCEnyV344gQ5Z5Q9VY1Ir1Hi1moA7YRa4siy+9emR/RnubbmdVo98TTy5mnBxgpEVWbdLLk/mFBtAxGenrKuL850aJlea1XWuRuOimm3V7nZbgBYWDQywYsjjBxXyDZay/j/oZv2HdmUqjn8j/Tw0KD0VugQDJuEBhL2Qfab1PFcKUtXZtnDqwDVVbAfV7rOw5KEkmj2bvTwkbIa71xYNWkQZmq5P4Lym4umiEwCYr7wizerPvXCwVG2ROI0BK/Rgkx+3S2d3Y/bU7iM1I3/+9sTMpPKU+zYye1+zmCqi7nw4ukTAanrVTIi0V/AWeTTYyrAQAA
     Metadata:
       aws:cdk:path: ShopyStack/CDKMetadata/Default
 Outputs:
@@ -1241,7 +1162,7 @@ Outputs:
           - .execute-api.us-east-1.
           - Ref: AWS::URLSuffix
           - /
-          - Ref: ShopyApigatewayDeploymentStagedev5B0ED329
+          - Ref: ShopyApigatewayDeploymentStageprod1C42062C
           - /
 Parameters:
   BootstrapVersion:
