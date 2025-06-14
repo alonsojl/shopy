@@ -1,12 +1,12 @@
 package apigateway
 
 import (
-	"category/internal/types"
-	"category/pkg/errorx"
 	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
+	"shopy/internal/types"
+	"shopy/pkg/errorx"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"

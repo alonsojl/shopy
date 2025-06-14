@@ -1,10 +1,10 @@
 package service
 
 import (
-	"category/internal/models"
-	"category/internal/types"
 	"context"
 	"log/slog"
+	"shopy/internal/models"
+	"shopy/internal/types"
 )
 
 type Repository interface {

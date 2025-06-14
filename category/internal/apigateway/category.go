@@ -1,13 +1,13 @@
 package apigateway
 
 import (
-	"category/internal/models"
-	"category/internal/types"
 	"context"
 	"encoding/base64"
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"shopy/internal/models"
+	"shopy/internal/types"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"

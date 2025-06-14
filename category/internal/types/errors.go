@@ -1,6 +1,6 @@
 package types
 
-import "category/pkg/errorx"
+import "shopy/pkg/errorx"
 
 const (
 	CodeBadRequest errorx.Code = iota

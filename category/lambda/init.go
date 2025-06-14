@@ -1,13 +1,13 @@
 package main
 
 import (
-	"category/internal/apigateway"
-	"category/internal/dynamodb"
-	"category/internal/s3"
-	"category/internal/service"
 	"log"
 	"log/slog"
 	"os"
+	"shopy/internal/apigateway"
+	"shopy/internal/dynamodb"
+	"shopy/internal/s3"
+	"shopy/internal/service"
 )
 
 var handler *apigateway.Category

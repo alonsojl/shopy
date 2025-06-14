@@ -1,14 +1,14 @@
 package dynamodb
 
 import (
-	"category/internal/models"
 	"context"
 	"errors"
 	"fmt"
 	"log/slog"
+	"shopy/internal/models"
 	"time"
 
-	mtypes "category/internal/types"
+	mtypes "shopy/internal/types"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
