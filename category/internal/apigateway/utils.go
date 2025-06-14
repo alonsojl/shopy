@@ -35,7 +35,7 @@ func Error(err error) (events.APIGatewayProxyResponse, error) {
 		response.Code = http.StatusInternalServerError
 	} else {
 		response.Status = "fail"
-		response.Message = errx.Error()
+		response.Message = errx.Message()
 		switch errx.Code() {
 		case types.CodeBadRequest:
 			response.Code = http.StatusBadRequest
@@ -49,7 +49,7 @@ func Error(err error) (events.APIGatewayProxyResponse, error) {
 	return JSON(response, response.Code)
 }
 
-func JSON(response interface{}, statusCode int) (events.APIGatewayProxyResponse, error) {
+func JSON(response any, statusCode int) (events.APIGatewayProxyResponse, error) {
 	body, err := json.Marshal(response)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
