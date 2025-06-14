@@ -23,6 +23,18 @@ linter: ## Lint source code.
 swagger: ## Generate swagger documentation.
 	@swag init --ot yaml,json -o ./assets -g ./lambda/main.go
 
+.PHONY: download
+download: ## Download Go dependencies.
+	@go get github.com/aws/aws-lambda-go@v1.49.0
+	@go get github.com/aws/aws-sdk-go-v2@v1.36.1
+	@go get github.com/aws/aws-sdk-go-v2/config@v1.29.6
+	@go get github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue@v1.18.4
+	@go get github.com/aws/aws-sdk-go-v2/service/dynamodb@v1.40.1
+	@go get github.com/go-ozzo/ozzo-validation/v4@v4.3.0
+	@go get github.com/golang-jwt/jwt/v5@v5.2.2
+	@go get golang.org/x/crypto@v0.33.0
+	@go mod tidy
+
 .PHONY: lambda
 lambda: ## Build lambda function and compress it into a zip file.
 	@rm -rf ./assets/lambda.zip ./assets/bootstrap

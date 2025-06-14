@@ -1,8 +1,8 @@
 package apigateway
 
 import (
+	"shopy/internal/models"
 	"time"
-	"user/internal/models"
 )
 
 type BaseResponse struct {

@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"shopy/internal/models"
+	"shopy/internal/types"
+	"shopy/pkg/encrypt"
+	"shopy/pkg/token"
 	"strconv"
 	"time"
-	"user/internal/models"
-	"user/internal/types"
-	"user/pkg/encrypt"
-	"user/pkg/token"
 )
 
 type Repository interface {

@@ -5,10 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"shopy/internal/models"
 	"time"
-	"user/internal/models"
 
-	mtypes "user/internal/types"
+	mtypes "shopy/internal/types"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"

@@ -4,9 +4,9 @@ import (
 	"log"
 	"log/slog"
 	"os"
-	"user/internal/apigateway"
-	"user/internal/dynamodb"
-	"user/internal/service"
+	"shopy/internal/apigateway"
+	"shopy/internal/dynamodb"
+	"shopy/internal/service"
 )
 
 var handler *apigateway.User

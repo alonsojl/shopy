@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"shopy/internal/types"
+	"shopy/pkg/errorx"
 	"time"
-	"user/internal/types"
-	"user/pkg/errorx"
 
 	"github.com/aws/aws-lambda-go/events"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
