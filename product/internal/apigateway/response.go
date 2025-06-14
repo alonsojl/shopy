@@ -1,7 +1,7 @@
 package apigateway
 
 import (
-	"product/internal/models"
+	"shopy/internal/models"
 	"time"
 )
 

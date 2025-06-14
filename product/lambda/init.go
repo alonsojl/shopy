@@ -4,10 +4,10 @@ import (
 	"log"
 	"log/slog"
 	"os"
-	"product/internal/apigateway"
-	"product/internal/dynamodb"
-	"product/internal/s3"
-	"product/internal/service"
+	"shopy/internal/apigateway"
+	"shopy/internal/dynamodb"
+	"shopy/internal/s3"
+	"shopy/internal/service"
 )
 
 var handler *apigateway.Product

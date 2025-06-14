@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"product/internal/types"
-	"product/pkg/errorx"
+	"shopy/internal/types"
+	"shopy/pkg/errorx"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
