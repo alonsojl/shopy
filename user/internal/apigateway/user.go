@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"shopy/internal/domain"
 	"shopy/internal/models"
-	"shopy/internal/types"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -14,7 +14,7 @@ import (
 
 type Service interface {
 	LoginUser(ctx context.Context, email, password string) (string, error)
-	AddUser(ctx context.Context, params types.UserParams) (*models.User, error)
+	AddUser(ctx context.Context, params domain.UserParams) (*models.User, error)
 	DelUser(ctx context.Context, email string) error
 }
 
@@ -64,12 +64,12 @@ func (u *User) HandleLoginUser(ctx context.Context, event events.APIGatewayProxy
 
 	if err := json.Unmarshal([]byte(event.Body), &request); err != nil {
 		u.logger.Error("invalid user body", "error", err)
-		return Error(types.ErrBodyRequest)
+		return Error(domain.ErrBodyRequest)
 	}
 
 	if err := request.Validate(); err != nil {
 		u.logger.Error("invalid user params", "error", err)
-		return Error(types.ErrParams.Wrap(err))
+		return Error(domain.ErrParams.Wrap(err))
 	}
 
 	token, err := u.service.LoginUser(ctx, request.Email, request.Password)
@@ -103,16 +103,16 @@ func (u *User) HandleAddUser(ctx context.Context, event events.APIGatewayProxyRe
 
 	if err := json.Unmarshal([]byte(event.Body), &request); err != nil {
 		u.logger.Error("invalid user body", "error", err)
-		return Error(types.ErrBodyRequest)
+		return Error(domain.ErrBodyRequest)
 	}
 
 	if err := request.Validate(); err != nil {
 		u.logger.Error("invalid user params", "error", err)
-		return Error(types.ErrParams.Wrap(err))
+		return Error(domain.ErrParams.Wrap(err))
 	}
 
 	now := time.Now().UTC()
-	user, err := u.service.AddUser(ctx, types.UserParams{
+	user, err := u.service.AddUser(ctx, domain.UserParams{
 		Email:     request.Email,
 		Password:  request.Password,
 		CreatedAt: now,

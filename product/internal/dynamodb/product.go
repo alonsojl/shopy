@@ -5,11 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"shopy/internal/domain"
 	"shopy/internal/models"
 	"strconv"
 	"time"
-
-	mtypes "shopy/internal/types"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
@@ -159,7 +158,7 @@ func (p *Product) GetTopProducts(ctx context.Context) (models.Products, error) {
 	return products, nil
 }
 
-func (p *Product) AddProduct(ctx context.Context, params mtypes.ProductParams) (*models.Product, error) {
+func (p *Product) AddProduct(ctx context.Context, params domain.ProductParams) (*models.Product, error) {
 	product := ProductTable{
 		Uuid:         params.Uuid,
 		Name:         params.Name,
@@ -189,7 +188,7 @@ func (p *Product) AddProduct(ctx context.Context, params mtypes.ProductParams) (
 	return assembleProduct(product), nil
 }
 
-func (p *Product) PutProduct(ctx context.Context, params mtypes.ProductParams) (*models.Product, error) {
+func (p *Product) PutProduct(ctx context.Context, params domain.ProductParams) (*models.Product, error) {
 	expression := "SET #name = :name, price = :price, qrcode = :qrcode, is_top = :is_top, category_uuid = :category_uuid, category_name = :category_name, updated_at = :updated_at"
 	expressionAttributeValues := map[string]types.AttributeValue{
 		":name":          &types.AttributeValueMemberS{Value: params.Name},
@@ -225,7 +224,7 @@ func (p *Product) PutProduct(ctx context.Context, params mtypes.ProductParams) (
 	if err != nil {
 		var errf *types.ConditionalCheckFailedException
 		if errors.As(err, &errf) {
-			return nil, mtypes.ErrNotFound
+			return nil, domain.ErrNotFound
 		}
 
 		return nil, fmt.Errorf("error updating item: %w", err)
@@ -256,7 +255,7 @@ func (p *Product) DelProduct(ctx context.Context, uuid string) (*models.Product,
 	if err != nil {
 		var errf *types.ConditionalCheckFailedException
 		if errors.As(err, &errf) {
-			return nil, mtypes.ErrNotFound
+			return nil, domain.ErrNotFound
 		}
 
 		return nil, fmt.Errorf("error deleting item: %w", err)

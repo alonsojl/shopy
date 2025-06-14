@@ -3,13 +3,13 @@ package service
 import (
 	"context"
 	"log/slog"
+	"shopy/internal/domain"
 	"shopy/internal/models"
-	"shopy/internal/types"
 )
 
 type Repository interface {
 	GetCategories(ctx context.Context) (models.Categories, error)
-	AddCategory(ctx context.Context, params types.CategoryParams) (*models.Category, error)
+	AddCategory(ctx context.Context, params domain.CategoryParams) (*models.Category, error)
 	DelCategory(ctx context.Context, uuid string) (*models.Category, error)
 }
 
@@ -36,7 +36,7 @@ func (c *Category) GetCategories(ctx context.Context) (models.Categories, error)
 	return c.repository.GetCategories(ctx)
 }
 
-func (c *Category) AddCategory(ctx context.Context, params types.CategoryParams) (*models.Category, error) {
+func (c *Category) AddCategory(ctx context.Context, params domain.CategoryParams) (*models.Category, error) {
 	location, err := c.storage.UploadImage(ctx, params.Uuid, params.Image)
 	if err != nil {
 		return nil, err

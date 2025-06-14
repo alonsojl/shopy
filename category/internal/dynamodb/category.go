@@ -5,10 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"shopy/internal/domain"
 	"shopy/internal/models"
 	"time"
-
-	mtypes "shopy/internal/types"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
@@ -48,7 +47,7 @@ func (c *Category) GetCategories(ctx context.Context) (models.Categories, error)
 	return categories, nil
 }
 
-func (c *Category) AddCategory(ctx context.Context, params mtypes.CategoryParams) (*models.Category, error) {
+func (c *Category) AddCategory(ctx context.Context, params domain.CategoryParams) (*models.Category, error) {
 	category := &models.Category{
 		Uuid:      params.Uuid,
 		Name:      params.Name,
@@ -90,7 +89,7 @@ func (c *Category) DelCategory(ctx context.Context, uuid string) (*models.Catego
 	if err != nil {
 		var errf *types.ConditionalCheckFailedException
 		if errors.As(err, &errf) {
-			return nil, mtypes.ErrNotFound
+			return nil, domain.ErrNotFound
 		}
 
 		return nil, fmt.Errorf("error deleting item: %w", err)

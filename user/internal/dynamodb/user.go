@@ -5,10 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"shopy/internal/domain"
 	"shopy/internal/models"
 	"time"
-
-	mtypes "shopy/internal/types"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
@@ -30,7 +29,7 @@ func NewUser(logger *slog.Logger, client *dynamodb.Client) *User {
 	}
 }
 
-func (u *User) AddUser(ctx context.Context, params mtypes.UserParams) (*models.User, error) {
+func (u *User) AddUser(ctx context.Context, params domain.UserParams) (*models.User, error) {
 	var (
 		user = &models.User{
 			Email:     params.Email,
@@ -69,7 +68,7 @@ func (u *User) DelUser(ctx context.Context, email string) error {
 	if err != nil {
 		var errf *types.ConditionalCheckFailedException
 		if errors.As(err, &errf) {
-			return mtypes.ErrNotFound
+			return domain.ErrNotFound
 		}
 
 		return fmt.Errorf("error deleting item: %w", err)

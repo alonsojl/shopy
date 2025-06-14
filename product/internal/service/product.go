@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 	"log/slog"
+	"shopy/internal/domain"
 	"shopy/internal/models"
-	"shopy/internal/types"
 )
 
 type Repository interface {
@@ -12,8 +12,8 @@ type Repository interface {
 	GetProductsByQRCode(ctx context.Context, qrcode string) (models.Products, error)
 	GetProductsByName(ctx context.Context, name string) (models.Products, error)
 	GetTopProducts(ctx context.Context) (models.Products, error)
-	AddProduct(ctx context.Context, params types.ProductParams) (*models.Product, error)
-	PutProduct(ctx context.Context, params types.ProductParams) (*models.Product, error)
+	AddProduct(ctx context.Context, params domain.ProductParams) (*models.Product, error)
+	PutProduct(ctx context.Context, params domain.ProductParams) (*models.Product, error)
 	DelProduct(ctx context.Context, uuid string) (*models.Product, error)
 }
 
@@ -36,7 +36,7 @@ func NewProduct(logger *slog.Logger, repository Repository, storage Storage) *Pr
 	}
 }
 
-func (p *Product) SearchProducts(ctx context.Context, params types.ProductParams) (models.Products, error) {
+func (p *Product) SearchProducts(ctx context.Context, params domain.ProductParams) (models.Products, error) {
 	switch {
 	case params.Category.Uuid != "":
 		return p.repository.GetProductsByCategory(ctx, params.Category.Uuid)
@@ -49,7 +49,7 @@ func (p *Product) SearchProducts(ctx context.Context, params types.ProductParams
 	}
 }
 
-func (p *Product) AddProduct(ctx context.Context, params types.ProductParams) (*models.Product, error) {
+func (p *Product) AddProduct(ctx context.Context, params domain.ProductParams) (*models.Product, error) {
 	location, err := p.storage.UploadImage(ctx, params.Uuid, params.Image)
 	if err != nil {
 		return nil, err
@@ -59,7 +59,7 @@ func (p *Product) AddProduct(ctx context.Context, params types.ProductParams) (*
 	return p.repository.AddProduct(ctx, params)
 }
 
-func (p *Product) PutProduct(ctx context.Context, params types.ProductParams) (*models.Product, error) {
+func (p *Product) PutProduct(ctx context.Context, params domain.ProductParams) (*models.Product, error) {
 	if params.Image != nil {
 		location, err := p.storage.UploadImage(ctx, params.Uuid, params.Image)
 		if err != nil {

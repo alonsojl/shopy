@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"shopy/internal/domain"
 	"shopy/internal/models"
-	"shopy/internal/types"
 	"shopy/pkg/encrypt"
 	"shopy/pkg/token"
 	"strconv"
@@ -14,7 +14,7 @@ import (
 )
 
 type Repository interface {
-	AddUser(ctx context.Context, params types.UserParams) (*models.User, error)
+	AddUser(ctx context.Context, params domain.UserParams) (*models.User, error)
 	DelUser(ctx context.Context, email string) error
 	GetUser(ctx context.Context, email string) (*models.User, error)
 }
@@ -45,17 +45,17 @@ func (u *User) LoginUser(ctx context.Context, email, password string) (string, e
 	user, err := u.repository.GetUser(ctx, email)
 	if err != nil {
 		u.logger.Error("error getting user", "error", err)
-		return "", types.ErrUnauthorized
+		return "", domain.ErrUnauthorized
 	}
 
 	if !encrypt.VerifyPassword(password, user.Password) {
-		return "", types.ErrUnauthorized
+		return "", domain.ErrUnauthorized
 	}
 
 	return u.jwt.Generate(ctx, u.expiresAt)
 }
 
-func (u *User) AddUser(ctx context.Context, params types.UserParams) (*models.User, error) {
+func (u *User) AddUser(ctx context.Context, params domain.UserParams) (*models.User, error) {
 	hash, err := encrypt.HashPassword(params.Password)
 	if err != nil {
 		return nil, fmt.Errorf("error hashing password: %w", err)

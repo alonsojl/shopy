@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"shopy/internal/domain"
 	"shopy/internal/models"
-	"shopy/internal/types"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -15,9 +15,9 @@ import (
 )
 
 type Service interface {
-	SearchProducts(ctx context.Context, params types.ProductParams) (models.Products, error)
-	AddProduct(ctx context.Context, params types.ProductParams) (*models.Product, error)
-	PutProduct(ctx context.Context, params types.ProductParams) (*models.Product, error)
+	SearchProducts(ctx context.Context, params domain.ProductParams) (models.Products, error)
+	AddProduct(ctx context.Context, params domain.ProductParams) (*models.Product, error)
+	PutProduct(ctx context.Context, params domain.ProductParams) (*models.Product, error)
 	DelProduct(ctx context.Context, uuid string) error
 }
 
@@ -67,10 +67,10 @@ func (p *Product) Router() APIGatewayFunc {
 // @Failure     401	{object} ErrorResponse "Unauthorized"
 // @Failure     500	{object} ErrorResponse "Error Internal Server"
 func (p *Product) HandleSearchProducts(ctx context.Context, event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	products, err := p.service.SearchProducts(ctx, types.ProductParams{
+	products, err := p.service.SearchProducts(ctx, domain.ProductParams{
 		Name:   event.QueryStringParameters["name"],
 		QRCode: event.QueryStringParameters["qrcode"],
-		Category: types.Category{
+		Category: domain.Category{
 			Uuid: event.QueryStringParameters["category_uuid"],
 		},
 	})
@@ -104,28 +104,28 @@ func (p *Product) HandleAddProduct(ctx context.Context, event events.APIGatewayP
 
 	if err := json.Unmarshal([]byte(event.Body), &request); err != nil {
 		p.logger.Error("invalid product body", "error", err)
-		return Error(types.ErrRequest)
+		return Error(domain.ErrRequest)
 	}
 
 	if err := request.Validate(); err != nil {
 		p.logger.Error("invalid product params", "error", err)
-		return Error(types.ErrParams.Wrap(err))
+		return Error(domain.ErrParams.Wrap(err))
 	}
 
 	image, err := base64.StdEncoding.DecodeString(request.Image)
 	if err != nil {
 		p.logger.Error("error decoding image", "error", err)
-		return Error(types.ErrRequest)
+		return Error(domain.ErrRequest)
 	}
 
 	now := time.Now().UTC()
-	product, err := p.service.AddProduct(ctx, types.ProductParams{
+	product, err := p.service.AddProduct(ctx, domain.ProductParams{
 		Uuid:   uuid.New().String(),
 		Name:   request.Name,
 		Price:  request.Price,
 		QRCode: request.QRCode,
 		IsTop:  request.IsTop,
-		Category: types.Category{
+		Category: domain.Category{
 			Uuid: request.Category.Uuid,
 			Name: request.Category.Name,
 		},
@@ -167,12 +167,12 @@ func (p *Product) HandlePutProduct(ctx context.Context, event events.APIGatewayP
 
 	if err = json.Unmarshal([]byte(event.Body), &request); err != nil {
 		p.logger.Error("invalid product body", "error", err)
-		return Error(types.ErrRequest)
+		return Error(domain.ErrRequest)
 	}
 
 	if err = request.Validate(); err != nil {
 		p.logger.Error("invalid product params", "error", err)
-		return Error(types.ErrParams.Wrap(err))
+		return Error(domain.ErrParams.Wrap(err))
 	}
 
 	var image []byte
@@ -180,18 +180,18 @@ func (p *Product) HandlePutProduct(ctx context.Context, event events.APIGatewayP
 		image, err = base64.StdEncoding.DecodeString(request.Image)
 		if err != nil {
 			p.logger.Error("error decoding image", "error", err)
-			return Error(types.ErrRequest)
+			return Error(domain.ErrRequest)
 		}
 	}
 
 	uuid := event.PathParameters["uuid"]
-	product, err := p.service.PutProduct(ctx, types.ProductParams{
+	product, err := p.service.PutProduct(ctx, domain.ProductParams{
 		Uuid:   uuid,
 		Name:   request.Name,
 		Price:  request.Price,
 		QRCode: request.QRCode,
 		IsTop:  request.IsTop,
-		Category: types.Category{
+		Category: domain.Category{
 			Uuid: request.Category.Uuid,
 			Name: request.Category.Name,
 		},

@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"shopy/internal/domain"
 	"shopy/internal/models"
-	"shopy/internal/types"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -16,7 +16,7 @@ import (
 
 type Service interface {
 	GetCategories(ctx context.Context) (models.Categories, error)
-	AddCategory(ctx context.Context, params types.CategoryParams) (*models.Category, error)
+	AddCategory(ctx context.Context, params domain.CategoryParams) (*models.Category, error)
 	DelCategory(ctx context.Context, uuid string) error
 }
 
@@ -92,22 +92,22 @@ func (c *Category) HandleAddCategory(ctx context.Context, event events.APIGatewa
 
 	if err := json.Unmarshal([]byte(event.Body), &request); err != nil {
 		c.logger.Error("invalid category body", "error", err)
-		return Error(types.ErrRequest)
+		return Error(domain.ErrRequest)
 	}
 
 	if err := request.Validate(); err != nil {
 		c.logger.Error("invalid category params", "error", err)
-		return Error(types.ErrParams.Wrap(err))
+		return Error(domain.ErrParams.Wrap(err))
 	}
 
 	image, err := base64.StdEncoding.DecodeString(request.Image)
 	if err != nil {
 		c.logger.Error("error decoding image", "error", err)
-		return Error(types.ErrRequest)
+		return Error(domain.ErrRequest)
 	}
 
 	now := time.Now().UTC()
-	category, err := c.service.AddCategory(ctx, types.CategoryParams{
+	category, err := c.service.AddCategory(ctx, domain.CategoryParams{
 		Uuid:      uuid.New().String(),
 		Name:      request.Name,
 		Image:     image,

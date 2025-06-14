@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"shopy/internal/types"
+	"shopy/internal/domain"
 	"shopy/pkg/errorx"
 	"time"
 
@@ -37,14 +37,14 @@ func Error(err error) (events.APIGatewayProxyResponse, error) {
 		response.Status = "fail"
 		response.Message = errx.Message()
 		switch errx.Code() {
-		case types.CodeBadRequest:
+		case domain.CodeBadRequest:
 			response.Code = http.StatusBadRequest
 			if errors.As(errx, &errs) {
 				response.Errors = errs
 			}
-		case types.CodeUnauthorized:
+		case domain.CodeUnauthorized:
 			response.Code = http.StatusUnauthorized
-		case types.CodeNotFound:
+		case domain.CodeNotFound:
 			response.Code = http.StatusNotFound
 		}
 	}
