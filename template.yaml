@@ -886,7 +886,7 @@ Resources:
         - arm64
       Code:
         S3Bucket: cdk-hnb659fds-assets-495456316389-us-east-1
-        S3Key: b74e4e2dcb2a516ca007e50b7b53a43e5e3d3481254783dcb3461e23b99f10fd.zip
+        S3Key: 4d7d1c379ffa60f74f48d3446942c3561a2500d5473bdcb0017e64e2030522b6.zip
       Environment:
         Variables:
           BUCKET_NAME:
@@ -905,7 +905,7 @@ Resources:
       - CategoryLambdaServiceRole55DDF3E3
     Metadata:
       aws:cdk:path: ShopyStack/CategoryLambda/Resource
-      aws:asset:path: asset.b74e4e2dcb2a516ca007e50b7b53a43e5e3d3481254783dcb3461e23b99f10fd.zip
+      aws:asset:path: asset.4d7d1c379ffa60f74f48d3446942c3561a2500d5473bdcb0017e64e2030522b6.zip
       aws:asset:is-bundled: false
       aws:asset:property: Code
   ProductDynamodb0231AF77:
@@ -1030,7 +1030,7 @@ Resources:
         - arm64
       Code:
         S3Bucket: cdk-hnb659fds-assets-495456316389-us-east-1
-        S3Key: 21220524a7a17d32e251899363cd27cfe236c6e5088602813e3ece29017e693e.zip
+        S3Key: 7663559adca4d55de59fea2a9bc658ad74d0d1bd1c633011c149f7814198688d.zip
       Environment:
         Variables:
           BUCKET_NAME:
@@ -1049,7 +1049,7 @@ Resources:
       - ProductLambdaServiceRoleF3599B51
     Metadata:
       aws:cdk:path: ShopyStack/ProductLambda/Resource
-      aws:asset:path: asset.21220524a7a17d32e251899363cd27cfe236c6e5088602813e3ece29017e693e.zip
+      aws:asset:path: asset.7663559adca4d55de59fea2a9bc658ad74d0d1bd1c633011c149f7814198688d.zip
       aws:asset:is-bundled: false
       aws:asset:property: Code
   UserDynamodbA9205E14:
@@ -1124,7 +1124,7 @@ Resources:
         - arm64
       Code:
         S3Bucket: cdk-hnb659fds-assets-495456316389-us-east-1
-        S3Key: 72b6014bf87fbd2f203f03b517ace39a60c3b30c7b0696be398242902df1b6e4.zip
+        S3Key: 15e7100aae6c89fa8fc11c7e2d0c686abf40305f1557e92fa785778eb0a6955a.zip
       Environment:
         Variables:
           TOKEN_EXP: "24"
@@ -1143,7 +1143,7 @@ Resources:
       - UserLambdaServiceRole0C79BFF0
     Metadata:
       aws:cdk:path: ShopyStack/UserLambda/Resource
-      aws:asset:path: asset.72b6014bf87fbd2f203f03b517ace39a60c3b30c7b0696be398242902df1b6e4.zip
+      aws:asset:path: asset.15e7100aae6c89fa8fc11c7e2d0c686abf40305f1557e92fa785778eb0a6955a.zip
       aws:asset:is-bundled: false
       aws:asset:property: Code
   CDKMetadata:

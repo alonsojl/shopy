@@ -98,7 +98,7 @@ func (p *Product) GetProductsByQRCode(ctx context.Context, qrcode string) (model
 func (p *Product) GetProductsByName(ctx context.Context, name string) (models.Products, error) {
 	input := &dynamodb.ScanInput{
 		TableName:        aws.String(p.tableName),
-		FilterExpression: aws.String("begins_with(#name, :name)"),
+		FilterExpression: aws.String("contains(#name, :name)"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":name": &types.AttributeValueMemberS{Value: name},
 		},
